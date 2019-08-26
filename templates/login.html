@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="pokemon catalog udacity project 2">
+  <meta name="author" content="Natalie Koop">
+  <!-- Adding all meta data and libraries to make google login work -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+  <meta name="google-signin-scope" content="profile email">
+  <meta name="google-signin-client_id" content="324569353522-iqqjcv8qgjk5p46c8epi2o5othcdl5hs.apps.googleusercontent.com">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <title>Pokemon Catalog</title>
+ 
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='bootstrap.min.css' ) }}">
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='simple-sidebar.css' ) }}">
+
+  <!-- Initial function submitting project meta data -->
+  <script>
+        function start() {
+          gapi.load('auth2', function() {
+            auth2 = gapi.auth2.init({
+              client_id: "324569353522-iqqjcv8qgjk5p46c8epi2o5othcdl5hs.apps.googleusercontent.com"
+            });
+          });
+        }
+      </script>
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar with generations overview-->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">Pokemon Catalog</div>
+      <div class="list-group list-group-flush">
+            {% for generation in generations %}
+            <a class="list-group-item list-group-item-action bg-light" href="{{url_for('generations', generation_id = generation.id) }}">{{generation.generation_name}}</a>
+            {% endfor %}
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+    <!-- Navbar checking if user is logged in. if yes, the logout button ans user picture is shown. If not,  login button is shown -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            {% if session['loged_in'] %}
+            <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('gdisconnect')}}"> log out </a>
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">             
+                    <img style="float:left;" src="{{session['picture']}}" width="40" height="40">
+            </li>
+          </ul>
+          {% else %}
+          <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('showLogin')}}">log in</a>
+          {% endif %}
+      </nav>
+      <!-- content -->
+      <div class="container-fluid">
+        <h3 class="mt-4">Login</h3> 
+            <!-- flash -->       
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            </br>
+            <div class = 'alert alert-success' role="alert" style="text-align:center; width:40%; margin: auto;">
+                {% for message in messages %}
+                {{message}}
+            </div>  
+            </br>
+            </br>     
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <!-- flash end -->
+
+            <div class="row justify-content-center align-items-top" style="height:100vh" id="intro">
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <form action="" autocomplete="off">
+                                <p>Login with your google account:</p>
+                                <!-- Add google button -->
+                                <div class="g-signin2" id="signinButton" data-onsuccess="onSignIn" data-longtitle="true"></div>
+        
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        <!-- Shows result of login attempt with google -->
+        <div id="result"></div>
+        
+    </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <!-- <button id="signinButton">Google Signin</button>--> 
+          
+<script>
+        $('#signinButton').click(function () {
+          function signInCallback(authResult) {
+            if (authResult['code']) {
+              // Hide the sign-in button now that the user is authorized.
+              $('#signinButton').attr('style', 'display:none');
+              // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main page.
+              $.ajax({
+                type: 'POST',
+                url: '/gconnect?state={{STATE}}',
+                processData: false,
+                data: authResult['code'],
+                contentType: 'application/octet-stream; charset=utf-8',
+                success: function (result) {
+                  // Handle or verify the server response if necessary.
+                  if (result) {
+                    var x = document.getElementById("intro");
+                    x.style.display = "none";
+                    // show message that user is redirected.
+                    $('#result').html('</br>Redirecting...')
+                    setTimeout(function() {
+                    // redirect to /.
+                     window.location.href = "/";
+                    }, 4000);
+                  // Handle errors.
+                  } else if (authResult['error']) {
+                    console.log('There was an error: ' + authResult['error']);
+                  } else {
+                    $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                  }
+                }
+              });
+            }
+          }
+          auth2.grantOfflineAccess().then(signInCallback);
+        })
+  </script>
+  <!--END GOOGLE PLUS SIGN IN -->
+</body>
+</html>

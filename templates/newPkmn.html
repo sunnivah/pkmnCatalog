@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Pokemon Catalog</title>
+ 
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='bootstrap.min.css' ) }}">
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='simple-sidebar.css' ) }}">
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar with generations overview-->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">Pokemon Catalog</div>
+      <div class="list-group list-group-flush">
+            {% for generation in generations %}
+            <a class="list-group-item list-group-item-action bg-light" href="{{url_for('generations', generation_id = generation.id) }}">{{generation.generation_name}}</a>
+            {% endfor %}
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+    <!-- Navbar checking if user is logged in. if yes, the logout button ans user picture is shown. If not,  login button is shown -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            {% if session['loged_in'] %}
+            <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('gdisconnect')}}"> log out </a>
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">             
+                    <img style="float:left;" src="{{session['picture']}}" width="40" height="40">
+            </li>
+          </ul>
+          {% else %}
+          <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('showLogin')}}">log in</a>
+          {% endif %}
+      </nav>
+      <!-- content -->
+        <div class="container-fluid">
+            <h3 class="mt-4">{{generation.generation_name}}: Create new pokemon</h3>
+            <p>Please help this catalog grow by adding new pokemon.</p>
+            <form action="{{url_for('newPkmn', generation_id=generation_id)}}" method="POST">
+                        <p>#: <input type="text" size="30" name="pkmn_id" required></p>
+                        <p>Name: <input type="text" size="30" name="pkmn_name" required></p>
+                        <p>Type: <input type="text" size="30" name="pkmn_type" required></p>
+                        <p>Image: <input type="text" size="30" name="pkmn_picture" required></p>
+                    <p><input class="btn btn-primary btn-sm" type="submit" value="Create">
+                    <a class="btn btn-secondary btn-sm" href="{{url_for('generations', generation_id = generation_id) }}">Cancel</a></p>
+            </form>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

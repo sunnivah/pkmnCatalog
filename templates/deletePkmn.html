@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Pokemon Catalog</title>
+ 
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='bootstrap.min.css' ) }}">
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='simple-sidebar.css' ) }}">
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar with generations overview-->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">Pokemon Catalog</div>
+      <div class="list-group list-group-flush">
+            {% for generation in generations %}
+            <a class="list-group-item list-group-item-action bg-light" href="{{url_for('generations', generation_id = generation.id) }}">{{generation.generation_name}}</a>
+            {% endfor %}
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+    <!-- Navigation bar -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            {% if session['loged_in'] %}
+            <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('gdisconnect')}}"> log out </a>
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">             
+                    <img style="float:left;" src="{{session['picture']}}" width="40" height="40">
+            </li>
+          </ul>
+          {% else %}
+          <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('showLogin')}}">log in</a>
+          {% endif %}
+      </nav>
+      <!-- content -->
+        <div class="container-fluid">
+            <h3 class="mt-4">{{generation.generation_name}}: Delete pokemon</h3>
+            <p>Are you sure you want to delete {{pkmnToDelete.pkmn_name}} from category {{generation.generation_name}}?</p>
+            
+            <form action="{{ url_for('deletePkmn',generation_id=pkmnToDelete.generation_id, pokemon_id=pkmnToDelete.id)}}" method = 'post'>
+                <input class="btn btn-danger btn-sm" type='submit', value = 'Delete'>
+                <a class="btn btn-secondary btn-sm" href = "{{url_for('generations', generation_id = pkmnToDelete.generation_id) }}">Cancel</a>
+            </form>  
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

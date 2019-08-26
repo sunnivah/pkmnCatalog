@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Pokemon Catalog</title>
+ 
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='bootstrap.min.css' ) }}">
+  <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='simple-sidebar.css' ) }}">
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar with generations overview -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">Pokemon Catalog</div>
+      <div class="list-group list-group-flush">
+            {% for generation in generations %}
+            <a class="list-group-item list-group-item-action bg-light" href="{{url_for('generations', generation_id = generation.id) }}">{{generation.generation_name}}</a>
+            {% endfor %}
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+    <!-- Navigation bar -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <!-- Navbar checking if user is logged in. if yes, the logout button ans user picture is shown. If not,  login button is shown -->
+            {% if session['loged_in'] %}
+            <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('gdisconnect')}}"> log out </a>
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">             
+                    <img style="float:left;" src="{{session['picture']}}" width="40" height="40">
+            </li>
+          </ul>
+          {% else %}
+          <a class="btn btn-primary btn-sm"  role="button" href="{{url_for('showLogin')}}">log in</a>
+          {% endif %}
+      </nav>
+      <!-- content -->
+        <div class="container-fluid">
+            <h1 class="mt-4">Welcome to Pokemon Catalog</h1> 
+            <!-- flash -->       
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            </br>
+            <div class = 'alert alert-success' role="alert" style="text-align:center; width:40%; margin: auto;">
+                {% for message in messages %}
+                {{message}}
+            </div>  
+            </br>
+            </br>     
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <!-- flash end -->
+            <p>This web page contains an overview of all pokemon from generation I up to generation VI. 
+                If you'd like to participate in maintaining the pokemon catalog database, login with you google account.</p> 
+            <P>ENJOY!</p>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
