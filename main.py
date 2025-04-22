@@ -23,7 +23,6 @@ import json
 from flask import make_response
 import requests
 
-
 app = Flask(__name__) 
 engine = create_engine('postgresql://catalog:catalog@18.196.63.184/pkmnCatalog')
 Base.metadata.bind = engine
